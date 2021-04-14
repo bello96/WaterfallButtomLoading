@@ -1,6 +1,6 @@
 <template>
   <div class="box">
-    <WaterfallFlow :waterInfo='waterInfo' />
+    <WaterfallFlow :waterInfo="waterInfo" :columns="columns" :offset="offset" />
   </div>
 </template>
 
@@ -10,6 +10,7 @@ export default {
   name: "App",
   data() {
     return {
+      // 数据
       waterInfo: [
         {
           content:
@@ -69,7 +70,7 @@ export default {
           content: "11",
         },
         {
-          content: "22",
+          content: "见叫做一见倾心，红尘中惊鸿的一瞥，4你便凝眸在我内心深处",
         },
         {
           content:
@@ -415,8 +416,10 @@ export default {
           content:
             "是谁，卷起秋风那无奈的萧瑟？是谁，在落花的泥土里浸染了无限的深情？是谁，点亮秋雨如针如丝的光芒？在秋雨深处，嗅到了寒凉的味道，让感觉缠绕丝丝缕缕秋的絮语。",
         },
-      ]
-    }
+      ],
+      columns: 2, // 列数
+      offset: 2, // 每个元素之间的间距
+    };
   },
   components: {
     WaterfallFlow,
@@ -425,4 +428,12 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.box {
+  width: 450px;
+  height: 500px;
+  margin: 0 auto;
+  // padding: 5px;
+  border: 1px dashed #aaa;
+  border-radius: 5px;
+}
 </style>
