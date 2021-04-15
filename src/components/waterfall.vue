@@ -3,13 +3,13 @@
     <li
       class="waterfall-item"
       ref="waterfallItem"
-      :style="{ width: `${(1 / columns) * 100}%` }"
+      :style="widthStyle"
       :key="index"
       v-for="(item, index) in newWaterInfo"
     >
       {{ item.content }}
     </li>
-    <li v-if="isshownotyet" :style="baselinestyle">-我是有底线的-</li>
+    <li v-if="isshownotyet" :style="baseLineStyle">-我是有底线的-</li>
   </ul>
 </template>
 
@@ -20,12 +20,15 @@ export default {
       newWaterInfo: [], // 新容器
       fullindex: 0, // 添加数据标志
       isshownotyet: false, // 是否显示我有底线
-      baselinestyle: {
+      baseLineStyle: {
         position: "absolute",
         top: "0px",
         width: "100%",
         textAlign: "center",
         color: "#aaa",
+      },
+      widthStyle: {
+        width: "",
       },
     };
   },
@@ -47,18 +50,26 @@ export default {
     // 第一次加载渲染截取前20个
     this.newWaterInfo = this.waterInfo.slice(0, 20);
   },
-
   mounted() {
-    // 布局设置
-    let childsNode = this.$refs.waterfallItem; //获取所有子元素dom
-    this.getWaterfall(this.columns, this.offset, childsNode);
+    // 容器
+    let waterfallbox = this.$refs.waterfallbox;
+    // 获取所有子元素dom集合
+    let childsNodes = this.$refs.waterfallItem;
+    // 计算每个子元素的宽度
+    let itemWidthVal =
+      (waterfallbox.offsetWidth - (this.columns - 1) * this.offset) /
+      this.columns;
+    this.widthStyle.width = `${itemWidthVal}px`;
+    // 布局
+    this.$nextTick(() => {
+      this.getWaterfall(this.columns, this.offset, childsNodes, itemWidthVal);
+    });
     // 给最外层盒子注册滚动事件
     /*
      * clientHeight 滚动可视区域高度（最外层盒子）
      * scrollTop 当前滚动位置 （滚动偏移量）
      * scrollHeight 整个滚动高度
      */
-    let waterfallbox = this.$refs.waterfallbox;
     waterfallbox.addEventListener(
       "scroll",
       this.throttle(this.scrollCallback, 1000, waterfallbox)
@@ -66,12 +77,13 @@ export default {
   },
   methods: {
     // 瀑布流布局结构处理函数
-    getWaterfall(columns, offset, childsNodes) {
+    getWaterfall(columns, offset, childsNodes, itemWidthVal) {
       /*
         参数说明
         columns  => 定义布局的列数
         offset => 元素与元素之间的偏移量
         childsNodes => 所有子元素节点
+        itemWidthVal => 每一项的宽度
       */
       let array = []; //定义空数组存储元素高度
       for (let i = 0; i < childsNodes.length; i++) {
@@ -81,14 +93,14 @@ export default {
           childsNodes[i].style.top = 0 + "px";
           childsNodes[i].style.left =
             i % columns == 0
-              ? childsNodes[0].offsetWidth * i + "px"
-              : childsNodes[0].offsetWidth * i + offset + "px";
+              ? itemWidthVal * i + "px"
+              : itemWidthVal * i + offset * i + "px";
           array.push(childsNodes[i].offsetHeight); // 获得第一行子元素的高度集合
         } else {
           let minHeight = array[0]; // 假设第一项的高度为最小
           let index = 0; // 记录高度最小的下标
           for (let j = 0; j < array.length; j++) {
-            //遍历数组array每一项，目的获得array的最小值和其索引值
+            //遍历数组array每一项，获得array中高度最小一项的下表值
             if (minHeight > array[j]) {
               minHeight = array[j];
               index = j;
@@ -126,7 +138,7 @@ export default {
         ) {
           // 已满 提示暂无更多
           let top = this.$refs.waterfallbox.scrollHeight;
-          this.baselinestyle.top = top + 15 + "px";
+          this.baseLineStyle.top = top + 15 + "px";
           this.isshownotyet = true;
           this.isscrool = true; // 一但满了 就不再处理
         } else {
@@ -191,12 +203,12 @@ export default {
   background: rgb(193, 193, 193);
 }
 .waterfall-item {
-  width: 30%;
   height: auto;
   font-size: 16px;
   border-radius: 3px;
   padding: 10px;
   position: absolute;
+  margin-right: 10px;
   box-sizing: border-box;
   text-indent: 2em;
   background-color: rgb(241, 243, 244);
