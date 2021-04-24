@@ -7,7 +7,7 @@
       :key="index"
       v-for="(item, index) in newWaterInfo"
     >
-      {{ item.content }}
+      <slot name="flow" :itemFlow="item"></slot>
     </li>
     <li v-if="isshownotyet" :style="baseLineStyle">-我是有底线的-</li>
   </ul>
@@ -45,10 +45,14 @@ export default {
       type: Number,
       default: 5,
     },
+    loadsNum: {
+      type: Number,
+      default: 20,
+    },
   },
   created() {
     // 第一次加载渲染截取前20个
-    this.newWaterInfo = this.waterInfo.slice(0, 20);
+    this.newWaterInfo = this.waterInfo.slice(0, this.loadsNum);
   },
   mounted() {
     // 容器
@@ -116,7 +120,10 @@ export default {
     },
     // 添加数据
     addwaterInfo(index) {
-      let arr = this.waterInfo.slice(20 * index, 20 * index + 20);
+      let arr = this.waterInfo.slice(
+        this.loadsNum * index,
+        this.loadsNum * index + this.loadsNum
+      );
       this.newWaterInfo = this.newWaterInfo.concat(arr);
       // 重新渲染
       this.$nextTick(() => {
@@ -190,8 +197,8 @@ export default {
 }
 .waterfall::-webkit-scrollbar {
   /* 滚动条整体样式  宽高分别对应横竖滚动条的尺寸大小*/
-  width: 5px;
-  height: 5px;
+  width: 4px;
+  height: 4px;
 }
 .waterfall::-webkit-scrollbar-track-piece {
   /* 滚动条没有滑块的轨道部分 */
@@ -200,17 +207,14 @@ export default {
 .waterfall::-webkit-scrollbar-thumb {
   /*滚动条里面的滑块*/
   border-radius: 5px;
-  background: rgb(193, 193, 193);
+  background: #dddee0;
 }
 .waterfall-item {
   height: auto;
-  font-size: 16px;
+  font-size: 14px;
   border-radius: 3px;
-  padding: 10px;
   position: absolute;
-  margin-right: 10px;
   box-sizing: border-box;
-  text-indent: 2em;
-  background-color: rgb(241, 243, 244);
+  background-color: #f2f8fe;
 }
 </style>

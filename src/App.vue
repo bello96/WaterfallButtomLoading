@@ -1,11 +1,25 @@
 <template>
   <div class="box">
-    <WaterfallFlow :waterInfo="waterInfo" :columns="columns" :offset="offset" />
+    <waterfallFlow
+      :waterInfo="waterInfo"
+      :columns="columns"
+      :offset="offset"
+      :loadsNum="loadsNum"
+    >
+      <template #flow="flow">
+        <!-- 使用者自定义渲染风格 -->
+        <div class="itembox">
+          <img v-if="flow.itemFlow.img" :src="flow.itemFlow.img" alt="" />
+          <p class="wordcolor">{{ flow.itemFlow.content }}</p>
+          <img v-if="flow.itemFlow.img2" :src="flow.itemFlow.img2" alt="" />
+        </div>
+      </template>
+    </waterfallFlow>
   </div>
 </template>
 
 <script>
-import WaterfallFlow from "./components/waterfall.vue";
+import waterfallFlow from "./components/waterfall.vue";
 export default {
   name: "App",
   data() {
@@ -19,13 +33,17 @@ export default {
         {
           content:
             "如果你的征途上有暴风雨，我愿把思念化作细丝，织成一把密密的友谊伞，让我们在暴风雨中走向胜境！",
+          img: require("./assets/1.jpg"),
         },
         {
           content:
             "只是因若如知弦鸣的悲凉，那手指余温可否换一平生至爱你一人。默然，相爱。寂静，欢喜。",
         },
         { content: "就让我们一直走下去，直到世界一片纯白。" },
-        { content: "我醒了，想看看天上飘着的是，云做的雨还是雪做的云。" },
+        {
+          content: "我醒了，想看看天上飘着的是，云做的雨还是雪做的云。",
+          img2: require("./assets/8.jpg"),
+        },
         {
           content:
             "是谁，卷起秋风那无奈的萧瑟？是谁，在落花的丝的光芒？在秋雨深处，嗅到了寒凉的味道，让感觉缠绕丝丝缕缕秋的絮语。",
@@ -38,6 +56,7 @@ export default {
         {
           content:
             "和善良对峙的，不一定只是邪恶。可能也是残酷。和理想对峙的，不一定只是世俗。可能也是天真。",
+          img: require("./assets/2.jpg"),
         },
         {
           content:
@@ -48,7 +67,10 @@ export default {
             "如果你的征途上有暴风雨，我愿把思念化作细丝，织成一把密密的友谊伞，让我们在暴风雨中走向胜境！",
         },
         { content: "就让我们一直走下去，直到世界一片纯白。" },
-        { content: "我醒了，想看看天上飘着的是，云做的雨还是雪做的云。" },
+        {
+          content: "我醒了，想看看天上飘着的是，云做的雨还是雪做的云。",
+          img2: require("./assets/4.jpg"),
+        },
         {
           content:
             "是谁，卷起秋风那无奈的萧瑟？是谁，在落花的丝的光芒？在秋雨深处，嗅到了寒凉的味道，让感觉缠绕丝丝缕缕秋的絮语。",
@@ -61,6 +83,7 @@ export default {
         {
           content:
             "和善良对峙的，不一定只是邪恶。可能也是残酷。和理想对峙的，不一定只是世俗。可能也是天真。",
+          img: require("./assets/3.jpg"),
         },
         {
           content:
@@ -74,7 +97,10 @@ export default {
           content:
             "只是因为在人群中多看了你一眼，使我忘不了你容颜，你可知弦断9的哀鸣？为你种情盅爱毒，受尽辗转轮回。你若如知弦鸣的悲凉，那手指余温可否换一世相守，且不问前世转身，且不诉前世别离，任它人间花如雨，平生至爱你一人。默然，相爱。寂静，欢喜。",
         },
-        { content: "就让我们一直走下去，直到世界一片纯白。" },
+        {
+          content: "就让我们一直走下去，直到世界一片纯白。",
+          img2: require("./assets/5.jpg"),
+        },
         { content: "我醒了，想看看天上飘着的是，云做的雨还是雪做的云。" },
         {
           content:
@@ -97,6 +123,7 @@ export default {
         {
           content:
             "是谁，卷起秋风那无奈的萧瑟？是谁，在落花的丝的光芒？在秋雨深处，嗅到了寒凉的味道，让感觉缠绕丝丝缕缕秋的絮语。",
+          img2: require("./assets/6.jpg"),
         },
         { content: "时光的洪流中，我们总00会长大。" },
         {
@@ -121,6 +148,7 @@ export default {
         {
           content:
             "世间有千万种相遇，而有种遇见叫做一见倾心，红尘中惊鸿的一瞥，4你便凝眸在我内心深处，而我为这一眼就开始为你步步沦陷，只想有你温暖的陪伴别无它求，弱水三千取一瓢饮，只想独享你的世界，安静品读。守一份承诺细诉着爱恋，步入你温暖的城池，人的一生有诸多的美好，而我情有独钟的是与你相濡以沫。",
+          img2: require("./assets/7.jpg"),
         },
         {
           content:
@@ -142,6 +170,7 @@ export default {
         {
           content:
             "是谁，卷起秋风那无奈的萧瑟？是谁，在落花的泥土里浸染了无限的深情？是谁，点亮秋雨如针如丝的光芒？在秋雨深处，嗅到了寒凉的味道，让感觉缠绕丝丝缕缕秋的絮语。",
+          img: require("./assets/8.jpg"),
         },
         { content: "时光的洪流中556，我们总会长大。" },
         {
@@ -174,6 +203,7 @@ export default {
         {
           content:
             "如果你的征途上有暴风雨，我愿把思念化作细丝，织成一把密密的友谊伞，让我们在暴风雨中走向胜境！",
+          img2: require("./assets/9.jpg"),
         },
         {
           content:
@@ -212,6 +242,7 @@ export default {
         {
           content:
             "和善良对峙的，不一定只是邪恶。可能也是残酷。和理想对峙的，不一定只是世俗。可能也是天真。",
+          img: require("./assets/10.jpg"),
         },
         {
           content:
@@ -760,21 +791,43 @@ export default {
         },
       ],
       columns: 3, // 列数
-      offset: 5, // 每个元素之间的间距
+      offset: 6, // 每个元素之间的间距
+      loadsNum: 20, // 每次触底加载数量
     };
   },
   components: {
-    WaterfallFlow,
+    waterfallFlow,
   },
 };
 </script>
 
 <style lang="less" scoped>
 .box {
-  width: 500px;
-  height: 600px;
+  width: 92vw;
+  height: 94vh;
   margin: 0 auto;
-  border: 1px dashed #aaa;
+  border: 1px solid #aaa;
   border-radius: 5px;
+  .itembox {
+    text-indent: 2em;
+    background-color: #f1f3f4;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    border-radius: 5px;
+    .wordcolor {
+      color: #000;
+      text-indent: 2em;
+      font-size: 16px;
+      list-style: none;
+      margin: 5px 0;
+      padding: 0;
+    }
+    img {
+      width: 100%;
+      display: block;
+    }
+  }
 }
 </style>
