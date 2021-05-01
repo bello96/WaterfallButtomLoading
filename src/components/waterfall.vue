@@ -3,13 +3,17 @@
     <li
       class="waterfall-item"
       ref="waterfallItem"
-      :style="{ width: itemWidthVal + 'px' }"
+      :style="{ width: itemWidth + 'px' }"
       :key="index"
-      v-for="(item, index) in newWaterInfo"
+      v-for="(item, index) in newWaterInfo.length === 0
+        ? waterInfo
+        : newWaterInfo"
     >
       <slot :flow="item"></slot>
     </li>
-    <li v-if="isShowNotYet" :style="baseLineStyle">-{{ noMoreText }}-</li>
+    <li v-if="isShowNotYet || isPeriod" :style="baseLineStyle">
+      -{{ noMoreText }}-
+    </li>
   </ul>
 </template>
 
@@ -18,8 +22,9 @@ export default {
   data() {
     return {
       newWaterInfo: [],
-      fullindex: 0,
+      fullindex: 0, // 添加数据标志
       isShowNotYet: false,
+      // 设置暂无数据显示位置
       baseLineStyle: {
         position: "absolute",
         top: "0px",
@@ -28,23 +33,36 @@ export default {
         color: this.notMoreTextColor,
         paddingBottom: "5px",
       },
-      itemWidthVal: 0,
+      itemWidth: 0, // 每个元素宽度
     };
   },
   props: {
+    // 所有数据
+    waterInfoAll: {
+      type: Array,
+      default: () => [],
+    },
+    // 类似分页的数据（累加）
     waterInfo: {
       type: Array,
       default: () => [],
     },
+    isPeriod: {
+      type: Boolean,
+      default: false,
+    },
+    // 列数
     columns: {
       type: Number,
       default: 2,
     },
+    // 间距
     offset: {
       type: Number,
       default: 5,
     },
-    loadsNum: {
+    // 每次添加数量
+    loadsSize: {
       type: Number,
       default: 20,
     },
@@ -58,37 +76,41 @@ export default {
     },
   },
   watch: {
-    waterInfo: {
+    // 监听全部数据 赋值
+    waterInfoAll: {
       immediate: true,
       handler(newarr) {
-        this.newWaterInfo = newarr.slice(0, this.loadsNum);
+        this.newWaterInfo = newarr.slice(0, this.loadsSize);
       },
     },
   },
   mounted() {
-    this.waterfallbox = this.$refs.waterfallbox;
+    this.waterfallbox = this.$refs.waterfallbox; // 容器
     this.scrollId = this.throttle(this.scrollCallback, 500, this.waterfallbox);
     this.waterfallbox.addEventListener("scroll", this.scrollId);
-    this.itemWidthVal =
+    // 每个元素的宽度
+    this.itemWidth =
       (this.waterfallbox.offsetWidth - (this.columns - 1) * this.offset) /
       this.columns;
   },
   updated() {
+    // 所有子元素
     this.childsNodes = this.$refs.waterfallItem;
     this.$nextTick(() => {
       this.getWaterfall(
         this.columns,
         this.offset,
         this.childsNodes,
-        this.itemWidthVal
+        this.itemWidth
       );
     });
   },
   beforeDestroy() {
-    this.removeScrollCallback();
+    this.removeScrollCallback(); // 移除滚动监听
   },
   methods: {
-    getWaterfall(columns, offset, childsNodes, itemWidthVal) {
+    // 布局
+    getWaterfall(columns, offset, childsNodes, itemWidth) {
       let array = [];
       for (let i = 0; i < childsNodes.length; i++) {
         if (i < columns) {
@@ -96,8 +118,8 @@ export default {
           childsNodes[i].style.top = 0 + "px";
           childsNodes[i].style.left =
             i % columns == 0
-              ? itemWidthVal * i + "px"
-              : itemWidthVal * i + offset * i + "px";
+              ? itemWidth * i + "px"
+              : itemWidth * i + offset * i + "px";
           array.push(childsNodes[i].offsetHeight); // 获得第一行子元素的高度集合
         } else {
           let minHeight = array[0]; // 假设第一项的高度为最小
@@ -117,36 +139,51 @@ export default {
         }
       }
     },
+    // 添加数据
     addwaterInfo(index) {
-      let arr = this.waterInfo.slice(
-        this.loadsNum * index,
-        this.loadsNum * index + this.loadsNum
+      let arr = this.waterInfoAll.slice(
+        this.loadsSize * index,
+        this.loadsSize * index + this.loadsSize
       );
       this.newWaterInfo = this.newWaterInfo.concat(arr);
     },
+    // 滚动回调
     scrollCallback(waterfallbox) {
       // 如果滚动区域高度与滚动偏移量之和 等于 整个滚动区域高度相等，说明到底了
       if (
         waterfallbox.clientHeight + parseInt(waterfallbox.scrollTop) + 10 >=
         waterfallbox.scrollHeight
       ) {
-        // 判断新的数据容器长度是否满了（与waterInfo相等）
-        if (this.newWaterInfo.length >= this.waterInfo.length) {
+        if (this.newWaterInfo.length === 0 && !this.isPeriod) {
+          this.$emit("bottomEvent");
+          if (this.isPeriod) {
+            this.setNotYetTop();
+            this.removeScrollCallback();
+          }
+          return;
+        }
+        // 判断新的数据容器长度是否满了（与waterInfoAll相等）
+        if (this.newWaterInfo.length >= this.waterInfoAll.length) {
           this.removeScrollCallback();
-          let top = this.$refs.waterfallbox.scrollHeight;
-          this.baseLineStyle.top = top + 16 + "px";
-          this.isShowNotYet = true;
+          this.setNotYetTop();
         } else {
           // 新容器还没有满 继续添加数据
-
           this.addwaterInfo(++this.fullindex);
         }
       }
     },
+    // 设置暂无数据top值
+    setNotYetTop() {
+      let top = this.$refs.waterfallbox.scrollHeight;
+      this.baseLineStyle.top = top + 16 + "px";
+      this.isShowNotYet = true;
+    },
+    // 移除滚动监听
     removeScrollCallback() {
       let waterfallbox = this.$refs.waterfallbox;
       waterfallbox.removeEventListener("scroll", this.scrollId);
     },
+    // 节流
     throttle(func, wait = 800, vdom) {
       let previous = 0,
         timer = null;
