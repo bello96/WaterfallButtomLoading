@@ -14,6 +14,13 @@
     <li v-if="isShowNotYet || isPeriod" :style="baseLineStyle">
       -{{ noMoreText }}-
     </li>
+    <div
+      class="notyetbox"
+      v-if="newWaterInfo.length === 0 && waterInfo.length === 0"
+    >
+      <img src="./../assets/notyet.svg" alt="" />
+      <span>{{ notYetText }}</span>
+    </div>
   </ul>
 </template>
 
@@ -73,6 +80,10 @@ export default {
     notMoreTextColor: {
       type: String,
       default: "#aaa",
+    },
+    notYetText: {
+      type: String,
+      default: "暂无数据",
     },
   },
   watch: {
@@ -237,6 +248,17 @@ export default {
   /*滚动条里面的滑块*/
   border-radius: 5px;
   background: #dddee0;
+}
+.waterfall .notyetbox {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #aaa;
+}
+.waterfall .notyetbox span {
+  text-align: center;
+  display: block;
 }
 .waterfall-item {
   height: auto;

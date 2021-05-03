@@ -5,6 +5,7 @@
       :offset="offset"
       :noMoreText="noMoreText"
       :notMoreTextColor="notMoreTextColor"
+      :notYetText="notYetText"
       :loadsSize="loadsSize"
       :waterInfoAll="waterInfoAll"
     >
@@ -20,18 +21,19 @@
 
 <script>
 /* 
-参数说明
-columns => 列数（默认：2）
-offset => 元素之间间距（默认：5）
-noMoreText => 暂无更多提示信息（默认：暂无更多）
-notMoreTextColor => 暂无更多文本颜色（默认：#aaa）
-loadsSize => 每次添加数量（默认：20）
+  参数说明
+  columns => 列数（默认：2）
+  offset => 元素之间间距（默认：5）
+  noMoreText => 暂无更多提示信息（默认：暂无更多）
+  notMoreTextColor => 暂无更多文本颜色（默认：#aaa）
+  notYetText => 暂无数据提示文本
+  loadsSize => 每次添加数量（默认：20）
 
-waterInfoAll => 全部数据
+  waterInfoAll => 全部数据
 
-waterInfo => 分页式添加数据容器
-bottomEvent => 触底回调函数（配合分页式）
-isPeriod => 没有数据标志（没有则传true 配合分页式）
+  waterInfo => 分页式添加数据容器
+  bottomEvent => 触底回调函数（配合分页式）
+  isPeriod => 没有数据标志（没有则传true 配合分页式）
 */
 import waterfallFlow from "./components/waterfall.vue";
 export default {
@@ -42,8 +44,10 @@ export default {
       offset: 5, // 元素之间的间距
       noMoreText: "没有更多了", // 暂无更多提示信息
       notMoreTextColor: "#aaa", // 暂无更多文字颜色
+      notYetText: "没有数据",
       waterInfoAll: [], // 一次性全部数据
       loadsSize: 30, // 每次触底加载数量
+      waterInfo: [],
     };
   },
   components: {
